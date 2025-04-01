@@ -1,11 +1,16 @@
-"""
-Pseudocode for 02_analysis.py:
+import os
+import pandas as pd
 
-1. Import necessary modules (pandas, numpy, os).
-2. Load the simulation results from outputs/simulation_results.csv.
-3. Group the data by 'Strategy' and compute descriptive statistics:
-    - Mean, median, standard deviation of Total_Time.
-4. Optionally, perform additional statistical tests (e.g., ANOVA) if desired.
-5. Save the computed analysis results (e.g., a summary table) as "analysis_results.csv" in outputs/.
-6. Optionally print the summary to console.
-"""
+def main():
+    results_path = os.path.join("outputs", "simulation_results.csv")
+    df = pd.read_csv(results_path)
+    
+    summary = df.groupby("Strategy")["Total_Time"].agg(['mean', 'median', 'std']).reset_index()
+    summary.rename(columns={'mean': 'Mean_Time', 'median': 'Median_Time', 'std': 'Std_Dev'}, inplace=True)
+    
+    os.makedirs("outputs", exist_ok=True)
+    summary.to_csv(os.path.join("outputs", "analysis_results.csv"), index=False)
+    print(summary)
+
+if __name__ == '__main__':
+    main()
