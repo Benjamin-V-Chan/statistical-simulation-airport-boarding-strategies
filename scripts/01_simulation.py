@@ -81,3 +81,23 @@ def simulate_boarding(passengers, strategy):
         finish_time = start_time + p.overhead_delay
         current_time = finish_time
     return current_time
+
+def main():
+    results = []
+    for rep in range(1, NUM_REPLICATIONS + 1):
+        for strategy in BOARDING_STRATEGIES:
+            passengers = []
+            total_passengers = NUM_ROWS * SEATS_PER_ROW
+            for pid in range(1, total_passengers + 1):
+                row = random.randint(1, NUM_ROWS)
+                overhead_delay = np.random.uniform(*OVERHEAD_DELAY_RANGE)
+                passengers.append(Passenger(pid, row, overhead_delay))
+            total_time = simulate_boarding(passengers, strategy)
+            results.append({'Replication': rep, 'Strategy': strategy, 'Total_Time': total_time})
+    
+    df = pd.DataFrame(results)
+    os.makedirs("outputs", exist_ok=True)
+    df.to_csv(os.path.join("outputs", "simulation_results.csv"), index=False)
+
+if __name__ == '__main__':
+    main()
